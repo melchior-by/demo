@@ -13,5 +13,7 @@
 <p>Your input will be analyzed and a personalized summary will be generated.</p>
 
 <p><a href="feedback">👉 Click here to leave your feedback</a></p>
+
+<p><a href="feedback?list=true">📋 View all feedback</a></p>
 </body>
 </html>
