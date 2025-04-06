@@ -3,6 +3,7 @@
 <html>
 <head>
     <title>Welcome to Feedback App</title>
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <h1>Welcome to the Feedback Application</h1>
