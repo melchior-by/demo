@@ -15,28 +15,42 @@
         <table border="1" cellpadding="8" cellspacing="0">
             <thead>
             <tr>
+                <th>ID</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Rating</th>
                 <th>Comment</th>
                 <th>Allow Contact</th>
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody>
             <c:forEach var="f" items="${feedbackList}">
                 <tr>
+                    <td>${f.id}</td>
                     <td>${f.name}</td>
                     <td>${f.email}</td>
                     <td>${f.rating}</td>
                     <td>${f.comment}</td>
-                    <td><c:out value="${f.allowContact}" /></td>
+                    <td>
+                    <c:choose>
+                        <c:when test="${f.allowContact}">Yes</c:when>
+                        <c:otherwise>No</c:otherwise>
+                    </c:choose>
+                    </td>
+                    <td>
+                        <a href="feedback?action=view&id=${f.id}">View</a>
+                        <a href="feedback?action=edit&id=${f.id}">Edit</a>
+                        <a href="feedback?action=delete&id=${f.id}" onclick="return confirm('Delete this feedback?');">Delete</a>
+                    </td>
                 </tr>
             </c:forEach>
             </tbody>
         </table>
     </c:if>
     <br/>
-    <a href="feedback">← Back to form</a>
+    <a href="form.jsp">Add New Feedback</a>
+    <a href="index.jsp">← Back to main</a>
 </div>
 </body>
 </html>

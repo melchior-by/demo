@@ -12,12 +12,21 @@ public class ConnectionFactory {
     static {
         try {
             Class.forName("org.postgresql.Driver");
+            System.out.println("✅ PostgreSQL JDBC Driver Registered");
         } catch (ClassNotFoundException e) {
+            System.err.println("❌ PostgreSQL JDBC Driver not found. Include it in your library path!");
             throw new RuntimeException("PostgreSQL JDBC Driver not found", e);
         }
     }
 
-    public static Connection createConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+    public static Connection createConnection() {
+        try {
+            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            System.out.println("✅ Connected to PostgreSQL: " + connection.getMetaData().getURL());
+            return connection;
+        } catch (SQLException e) {
+            System.err.println("❌ Connection failed: " + e.getMessage());
+            throw new RuntimeException("Failed to connect to database", e);
+        }
     }
 }
