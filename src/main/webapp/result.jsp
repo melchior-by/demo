@@ -21,7 +21,10 @@
             <li><strong>Submitted At:</strong> ${formattedDate}</li>
         </ul>
     </c:if>
-    <a href="feedback">Back to Form</a>
+    <div class="navigation">
+        <a href="feedback">Back to Form</a>
+        <a href="feedback?action=list">📋 View All Feedback</a>
+    </div>
 </div>
 </body>
 </html>

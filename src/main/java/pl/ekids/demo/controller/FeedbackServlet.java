@@ -1,31 +1,71 @@
 package pl.ekids.demo.controller;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import pl.ekids.demo.dao.DaoFactory;
 import pl.ekids.demo.dao.FeedbackDao;
 import pl.ekids.demo.model.Feedback;
 import pl.ekids.demo.service.FeedbackService;
 
-import jakarta.servlet.*;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @WebServlet("/feedback")
 public class FeedbackServlet extends HttpServlet {
-    private final FeedbackService service = new FeedbackService();
-    private final FeedbackDao dao = DaoFactory.getDao(DaoFactory.DaoType.IN_MEMORY);
+    private FeedbackService service;
+    private FeedbackDao dao;
+
+    @Override
+    public void init() throws ServletException {
+        dao = DaoFactory.getDao();
+        service = new FeedbackService();
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //?list=true -> showAll = true
-        String showAll = request.getParameter("list");
-        if ("true".equals(showAll)) {
-            request.setAttribute("feedbackList", dao.findAll());
-            request.getRequestDispatcher("/feedback-list.jsp").forward(request, response);
-        } else {
-            request.getRequestDispatcher("/form.jsp").forward(request, response);
+        //                          "view"
+        Action action = Action.from(request.getParameter("action"));
+
+        if (action == null) {
+            response.sendRedirect("form.jsp");
+            return;
+        }
+
+        try {
+            switch (action) {
+                case LIST -> {
+                    List<Feedback> feedbackList = dao.findAll();
+                    request.setAttribute("feedbackList", feedbackList);
+                    request.getRequestDispatcher("/feedback-list.jsp").forward(request, response);
+                }
+                case VIEW -> {
+                    int id = Integer.parseInt(request.getParameter("id"));
+                    Feedback feedback = dao.findById(id).orElseThrow();
+                    request.setAttribute("feedback", feedback);
+                    request.getRequestDispatcher("/feedback-detail.jsp").forward(request, response);
+                }
+                case EDIT -> {
+                    int id = Integer.parseInt(request.getParameter("id"));
+                    Feedback feedback = dao.findById(id).orElseThrow();
+                    request.setAttribute("feedback", feedback);
+                    request.getRequestDispatcher("/feedback-edit.jsp").forward(request, response);
+                }
+                case DELETE -> {
+                    int id = Integer.parseInt(request.getParameter("id"));
+                    dao.delete(id);
+                    response.sendRedirect("feedback?action=list");
+                }
+                default -> response.sendRedirect("form.jsp");
+            }
+        } catch (Exception e) {
+            request.setAttribute("errorMessage", "Ошибка: " + e.getMessage());
+            request.getRequestDispatcher("/feedback-error.jsp").forward(request, response);
         }
     }
 

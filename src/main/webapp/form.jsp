@@ -28,6 +28,9 @@
 
         <input type="submit" value="Submit" class="submit-btn" />
     </form>
+    <div class="navigation">
+        <a href="feedback?action=list">📋 View All Feedback</a>
+    </div>
 </div>
 </body>
 </html>
